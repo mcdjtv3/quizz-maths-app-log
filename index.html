@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Logarithmes Népériens</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-image: none;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        
+        
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>Quiz : Logarithmes Népériens</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+
+<script>
+    const quizData = [
+        { question: "Quelle est la valeur de ln(1) ?", choices: ["0", "1", "e", "−1"], correct: 0 },
+        { question: "Si ln(e) = x, quelle est la valeur de x ?", choices: ["0", "1", "e", "x"], correct: 1 },
+        { question: "Simplifiez ln(e**3).", choices: ["3", "e**3", "0", "1"], correct: 0 },
+        { question: "Si ln(5) = x, quelle est la valeur de ln(1/5) ?", choices: ["−x", "x", "1/x", "x**2"], correct: 0 },
+        { question: "Simplifiez ln(2) + ln(3).", choices: ["ln(5)", "ln(6)", "ln(2*3)", "ln(8)"], correct: 1 },
+        { question: "Quelle est la valeur de ln(e**x) ?", choices: ["x", "e", "e**x", "ln(x)"], correct: 0 },
+        { question: "Si ln(7) = a, quelle est la valeur de ln(49) ?", choices: ["2a", "a", "a/2", "a**2"], correct: 0 },
+        { question: "Quelle est la valeur de ln(1/e) ?", choices: ["−1", "1", "0", "e"], correct: 0 },
+        { question: "Simplifiez ln(e).", choices: ["1/2", "1/2ln(e)", "e", "0"], correct: 0 },
+        { question: "Quelle est la valeur de ln(10) si ln(2) = a et ln(5) = b ?", choices: ["a+b", "ab", "a−b", "ln(7)"], correct: 0 },
+        { question: "Si ln(x) = 3, quelle est la valeur de x ?", choices: ["e**3", "3e", "e", "3"], correct: 0 },
+        { question: "Simplifiez ln(ab).", choices: ["b*ln(a)", "a+b", "ln(a)/b", "ln(ab)"], correct: 0 },
+        { question: "Quelle est la dérivée de ln(x) par rapport à x ?", choices: ["1/x", "x", "ln(x)", "0"], correct: 0 },
+        { question: "Résolvez ln(x−2) = ln(3).", choices: ["x=5", "x=1", "x=2", "x=0"], correct: 0 },
+        { question: "Simplifiez ln(xy).", choices: ["ln(x)−ln(y)", "ln(x)+ln(y)", "ln(x)ln(y)", "ln(xy)"], correct: 1 },
+        { question: "Quelle est la solution de ln(x) = 0 ?", choices: ["x=1", "x=0", "x=e", "x=−1"], correct: 0 },
+        { question: "Si ln(3) = a, quelle est la valeur de ln(27) ?", choices: ["3a", "a", "a**3", "9a"], correct: 0 },
+        { question: "Simplifiez ln(10/4).", choices: ["ln(10)−ln(4)", "ln(10)+ln(4)", "ln(10)/ln(4)", "ln(6)"], correct: 0 },
+        { question: "Résolvez l'équation ln(x²) = 4.", choices: ["x=±e**2", "x=2", "x=e", "x=±2"], correct: 0 },
+        { question: "Quelle est la valeur de ln(1/x²) ?", choices: ["−2ln(x)", "ln(x²)", "2ln(x)", "ln(x)/2"], correct: 0 },
+        { question: "Résolvez ln(x) + ln(x−1) = 1.", choices: ["x=2", "x=1", "x=0", "x=e"], correct: 0 },
+        { question: "Si y=ln(x³)−2ln(x), simplifiez y.", choices: ["ln(x)", "ln(x²)", "ln(x)−2", "x"], correct: 0 },
+        { question: "Trouvez la dérivée de f(x) = x*ln(x).", choices: ["ln(x)+1", "x*ln(x)", "xln(x)−1", "xln(x)+x"], correct: 3 },
+        { question: "Si ln(x) = 2ln(3), quelle est la valeur de x ?", choices: ["9", "6", "3", "e**3"], correct: 0 },
+        { question: "Résolvez l'équation ln(x−2)+ln(2)=ln(8).", choices: ["x=6", "x=4", "x=8", "x=10"], correct: 0 },
+        { question: "Quelle est l'intégrale de 1/x ?", choices: ["ln(x)+C", "xln(x)+C", "1/x+C", "ln(x)/x+C"], correct: 0 },
+        { question: "Simplifiez ln(x)−ln(1/x).", choices: ["2ln(x)", "0", "−2ln(x)", "ln(x²)"], correct: 0 },
+        { question: "Résolvez l'équation ln(x+1)−ln(x)=ln(2).", choices: ["x=1", "x=2", "x=3", "x=0"], correct: 0 },
+        { question: "Simplifiez l'expression ln(e²/x³).", choices: ["2−3ln(x)", "2ln(e)−ln(x³)", "2/3ln(x)", "2+ln(x)"], correct: 0 },
+        { question: "Si ln(a)=1 et ln(b)=2, trouvez ln(b/a²).", choices: ["0", "2−2ln(a)", "ln(b)−2ln(a)", "−1"], correct: 0 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+</html>
